@@ -1,0 +1,161 @@
+# AI Ops Gateway Stack
+# LiteLLM + Langfuse + Qdrant + PostgreSQL
+
+version: '3.8'
+
+services:
+  # ===================
+  # AI GATEWAY (LiteLLM)
+  # ===================
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: ai-ops-gateway
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./litellm_config.yaml:/app/config.yaml
+    environment:
+      # API Keys (set in .env file)
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+
+      # Database for cost tracking
+      - DATABASE_URL=postgresql://aiops:${POSTGRES_PASSWORD}@postgres:5432/litellm
+
+      # Langfuse integration
+      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY}
+      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY}
+      - LANGFUSE_HOST=http://langfuse:3000
+
+      # Master key for API access
+      - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY}
+    command: --config /app/config.yaml --detailed_debug
+    depends_on:
+      - postgres
+      - langfuse
+    restart: unless-stopped
+    networks:
+      - ai-ops-network
+
+  # ===================
+  # OBSERVABILITY (Langfuse)
+  # ===================
+  langfuse:
+    image: langfuse/langfuse:latest
+    container_name: ai-ops-observability
+    ports:
+      - "3001:3000"
+    environment:
+      - DATABASE_URL=postgresql://aiops:${POSTGRES_PASSWORD}@postgres:5432/langfuse
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - SALT=${LANGFUSE_SALT}
+      - NEXTAUTH_URL=http://localhost:3001
+      - TELEMETRY_ENABLED=false
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    networks:
+      - ai-ops-network
+
+  # ===================
+  # CHAT INTERFACE (Open WebUI)
+  # ===================
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: ai-ops-chat
+    ports:
+      - "3000:8080"
+    volumes:
+      - open-webui-data:/app/backend/data
+    environment:
+      # Connect to LiteLLM gateway
+      - OPENAI_API_BASE_URL=http://litellm:4000/v1
+      - OPENAI_API_KEY=${LITELLM_MASTER_KEY}
+
+      # Disable default Ollama connection
+      - OLLAMA_BASE_URL=
+
+      # Enable RAG with Qdrant
+      - RAG_EMBEDDING_ENGINE=openai
+      - RAG_EMBEDDING_MODEL=text-embedding-3-small
+      - VECTOR_DB=qdrant
+      - QDRANT_URI=http://qdrant:6333
+    depends_on:
+      - litellm
+      - qdrant
+    restart: unless-stopped
+    networks:
+      - ai-ops-network
+
+  # ===================
+  # VECTOR DATABASE (Qdrant)
+  # ===================
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: ai-ops-vectors
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant-data:/qdrant/storage
+    restart: unless-stopped
+    networks:
+      - ai-ops-network
+
+  # ===================
+  # DATABASE (PostgreSQL)
+  # ===================
+  postgres:
+    image: postgres:16-alpine
+    container_name: ai-ops-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=aiops
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=aiops
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    networks:
+      - ai-ops-network
+
+  # ===================
+  # LOCAL MODELS (Ollama) - Optional
+  # ===================
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ai-ops-local
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    # Uncomment for GPU support
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+    restart: unless-stopped
+    networks:
+      - ai-ops-network
+
+# ===================
+# VOLUMES
+# ===================
+volumes:
+  open-webui-data:
+  qdrant-data:
+  postgres-data:
+  ollama-data:
+
+# ===================
+# NETWORKS
+# ===================
+networks:
+  ai-ops-network:
+    driver: bridge

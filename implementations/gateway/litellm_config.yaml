@@ -1,0 +1,188 @@
+# LiteLLM Gateway Configuration
+# AI Ops - Unified API for all providers
+
+# ===================
+# MODEL LIST
+# ===================
+model_list:
+  # -------------------
+  # ANTHROPIC (Claude)
+  # -------------------
+  - model_name: claude-opus
+    litellm_params:
+      model: claude-opus-4-5-20251101
+      api_key: os.environ/ANTHROPIC_API_KEY
+    model_info:
+      description: "Best reasoning, complex tasks"
+      mode: chat
+
+  - model_name: claude-sonnet
+    litellm_params:
+      model: claude-sonnet-4-20250514
+      api_key: os.environ/ANTHROPIC_API_KEY
+    model_info:
+      description: "Balanced performance, daily driver"
+      mode: chat
+
+  - model_name: claude-haiku
+    litellm_params:
+      model: claude-3-5-haiku-20241022
+      api_key: os.environ/ANTHROPIC_API_KEY
+    model_info:
+      description: "Fast, cheap, simple tasks"
+      mode: chat
+
+  # -------------------
+  # OPENAI (GPT)
+  # -------------------
+  - model_name: gpt-4o
+    litellm_params:
+      model: gpt-4o
+      api_key: os.environ/OPENAI_API_KEY
+    model_info:
+      description: "General purpose, vision capable"
+      mode: chat
+
+  - model_name: gpt-4o-mini
+    litellm_params:
+      model: gpt-4o-mini
+      api_key: os.environ/OPENAI_API_KEY
+    model_info:
+      description: "Fast, cheap, high volume"
+      mode: chat
+
+  - model_name: o1
+    litellm_params:
+      model: o1
+      api_key: os.environ/OPENAI_API_KEY
+    model_info:
+      description: "Deep reasoning, math, complex problems"
+      mode: chat
+
+  # -------------------
+  # GOOGLE (Gemini)
+  # -------------------
+  - model_name: gemini-pro
+    litellm_params:
+      model: gemini/gemini-2.5-pro
+      api_key: os.environ/GOOGLE_API_KEY
+    model_info:
+      description: "Long context, multimodal"
+      mode: chat
+
+  - model_name: gemini-flash
+    litellm_params:
+      model: gemini/gemini-2.5-flash
+      api_key: os.environ/GOOGLE_API_KEY
+    model_info:
+      description: "Fast, efficient, multimodal"
+      mode: chat
+
+  # -------------------
+  # LOCAL (Ollama)
+  # -------------------
+  - model_name: local-llama
+    litellm_params:
+      model: ollama/llama3.3:70b
+      api_base: http://ollama:11434
+    model_info:
+      description: "Local, private, free"
+      mode: chat
+
+  - model_name: local-mistral
+    litellm_params:
+      model: ollama/mistral:7b
+      api_base: http://ollama:11434
+    model_info:
+      description: "Local, fast, small"
+      mode: chat
+
+  # -------------------
+  # EMBEDDINGS
+  # -------------------
+  - model_name: text-embedding-3-small
+    litellm_params:
+      model: text-embedding-3-small
+      api_key: os.environ/OPENAI_API_KEY
+    model_info:
+      mode: embedding
+
+  - model_name: text-embedding-3-large
+    litellm_params:
+      model: text-embedding-3-large
+      api_key: os.environ/OPENAI_API_KEY
+    model_info:
+      mode: embedding
+
+# ===================
+# ALIASES (Semantic Names)
+# ===================
+model_alias_map:
+  # Use semantic names in your code
+  reasoning: claude-opus
+  default: claude-sonnet
+  fast: claude-haiku
+  vision: gpt-4o
+  cheap: gpt-4o-mini
+  long-context: gemini-pro
+  multimodal: gemini-flash
+  private: local-llama
+  embedding: text-embedding-3-small
+
+# ===================
+# ROUTER SETTINGS
+# ===================
+router_settings:
+  # Routing strategy
+  routing_strategy: simple-shuffle
+
+  # Fallbacks when a model fails
+  fallbacks:
+    - claude-opus: [gpt-4o, gemini-pro]
+    - claude-sonnet: [gpt-4o, gemini-flash]
+    - claude-haiku: [gpt-4o-mini, gemini-flash]
+    - gpt-4o: [claude-sonnet, gemini-pro]
+
+  # Retry settings
+  num_retries: 2
+  timeout: 120
+
+  # Enable caching (Redis recommended for production)
+  # cache: true
+  # cache_params:
+  #   type: redis
+  #   host: redis
+  #   port: 6379
+
+# ===================
+# GENERAL SETTINGS
+# ===================
+general_settings:
+  # Master API key for accessing gateway
+  master_key: os.environ/LITELLM_MASTER_KEY
+
+  # Database for tracking
+  database_url: os.environ/DATABASE_URL
+
+  # Callbacks for observability
+  success_callback: ["langfuse"]
+  failure_callback: ["langfuse"]
+
+# ===================
+# LITELLM SETTINGS
+# ===================
+litellm_settings:
+  # Drop unsupported params instead of erroring
+  drop_params: true
+
+  # Set budgets (optional)
+  # max_budget: 100  # $100/month
+  # budget_duration: "monthly"
+
+# ===================
+# ENVIRONMENT VARIABLES
+# ===================
+environment_variables:
+  LANGFUSE_PUBLIC_KEY: os.environ/LANGFUSE_PUBLIC_KEY
+  LANGFUSE_SECRET_KEY: os.environ/LANGFUSE_SECRET_KEY
+  LANGFUSE_HOST: os.environ/LANGFUSE_HOST
