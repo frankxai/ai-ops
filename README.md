@@ -1,177 +1,117 @@
 # AI Ops
 
-> Personal AI Operations Platform - Research Hub & Implementation
+> The Philosophy, Methodology, and Practice of Operating with AI
 
-A comprehensive AI operations infrastructure for managing multiple AI providers, agents, and workflows across personal, creative, family, and enterprise domains.
+## What is AI Ops?
 
-## Vision
-
-**Own your AI stack. No vendor lock-in. Full data sovereignty.**
-
-This platform serves:
-- **GenCreator** - Generative creator business
-- **Agentic Creator OS** - AI agent orchestration
-- **Family Intelligence** - Private family AI assistant
-- **Enterprise Work** - Consulting (isolated)
-
-## Architecture
+**AI Ops is not DevOps for AI.** It's how humans and AI operate together—across personal life, creative work, family, and enterprise.
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                         AI OPS PLATFORM                         │
-├─────────────────────────────────────────────────────────────────┤
-│  INTERFACES        │ Open WebUI, Element, Mobile, CLI           │
-├────────────────────┼────────────────────────────────────────────┤
-│  GATEWAY           │ LiteLLM (unified API → all providers)      │
-├────────────────────┼────────────────────────────────────────────┤
-│  GUARDRAILS        │ PII detection, toxicity, prompt injection  │
-├────────────────────┼────────────────────────────────────────────┤
-│  PROMPT OPS        │ Versioning, A/B testing, templates         │
-├────────────────────┼────────────────────────────────────────────┤
-│  MEMORY            │ Long-term, episodic, knowledge graphs      │
-├────────────────────┼────────────────────────────────────────────┤
-│  EVALUATION        │ Automated scoring, hallucination detection │
-├────────────────────┼────────────────────────────────────────────┤
-│  OBSERVABILITY     │ Langfuse (tracing, cost, analytics)        │
-├────────────────────┼────────────────────────────────────────────┤
-│  ORCHESTRATION     │ n8n, Temporal (workflows, agents)          │
-├────────────────────┼────────────────────────────────────────────┤
-│  DATA              │ Qdrant, PostgreSQL, Object Storage         │
-└─────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────┐
+│           PHILOSOPHY                            │
+│   Why and how humans partner with AI            │
+├─────────────────────────────────────────────────┤
+│           CONTENT                               │
+│   Books, guides, courses, thought leadership    │
+├─────────────────────────────────────────────────┤
+│           METHODOLOGY                           │
+│   Frameworks, workflows, patterns               │
+├─────────────────────────────────────────────────┤
+│           INFRASTRUCTURE                        │
+│   Tools, platforms, implementations             │
+└─────────────────────────────────────────────────┘
 ```
 
-## Repository Structure
+## This Repository
+
+| Directory | What's Inside |
+|-----------|---------------|
+| `/book` | "AI Ops" book manuscript and outline |
+| `/methodology` | The AI Ops Framework and principles |
+| `/content` | Articles, courses, social content |
+| `/guides` | Practical how-to guides |
+| `/research` | Provider analysis, pattern studies |
+| `/implementations` | Ready-to-deploy tech stacks |
+
+## Quick Links
+
+- **[The AI Ops Framework](methodology/AI_OPS_FRAMEWORK.md)** - Core philosophy and principles
+- **[Book Outline](book/BOOK_OUTLINE.md)** - The AI Ops book in progress
+- **[Your First Stack](guides/getting-started/YOUR_FIRST_AI_OPS_STACK.md)** - Deploy unified AI in 30 minutes
+- **[Provider Research](research/providers/)** - Claude, GPT, Gemini, Ollama, OCI analysis
+
+## The AI Ops Maturity Model
+
+| Level | Name | Description |
+|-------|------|-------------|
+| 1 | Reactive | Using AI tools ad-hoc, no system |
+| 2 | Organized | Consolidated interfaces, basic tracking |
+| 3 | Systematic | Unified API, observability, documented workflows |
+| 4 | Intelligent | AI agents, automated pipelines, memory systems |
+| 5 | Autonomous | Self-improving, proactive AI, human-in-the-loop only |
+
+## Core Principles
+
+1. **AI as Amplifier** - Multiplies your capabilities, not replaces you
+2. **Unified Intelligence** - One interface to many models
+3. **Observability Default** - Track everything, learn continuously
+4. **Privacy First** - Sensitive data stays local
+5. **Domain Adaptation** - Generic AI + your patterns = powerful
+6. **Collective Units** - Family/team AI ops, not just individual
+
+## AI Ops Domains
+
+### Personal
+Your individual practice—creativity, learning, productivity, knowledge management.
+
+### Family
+Collective intelligence at home—shared access, safety guardrails, cross-generational knowledge.
+
+### Creator
+Content pipelines, agentic workflows, maintaining authenticity at scale.
+
+### Enterprise
+Gateways, observability, governance, multi-agent orchestration.
+
+## The Tech Stack (Implementation)
 
 ```
-ai-ops/
-├── research/                    # Research & documentation
-│   ├── providers/              # AI provider analysis
-│   │   ├── anthropic.md
-│   │   ├── openai.md
-│   │   ├── google.md
-│   │   ├── ollama.md
-│   │   └── oracle-oci.md
-│   ├── platforms/              # Platform comparisons
-│   │   ├── gateways.md
-│   │   ├── observability.md
-│   │   ├── vector-databases.md
-│   │   └── orchestration.md
-│   ├── patterns/               # Architecture patterns
-│   │   ├── multi-tenant.md
-│   │   ├── agent-memory.md
-│   │   └── cost-optimization.md
-│   └── evaluations/            # Tool evaluations
-│       ├── open-webui.md
-│       ├── litellm.md
-│       └── langfuse.md
-│
-├── docs/                        # System documentation
-│   ├── ARCHITECTURE.md         # Full architecture spec
-│   ├── DEPLOYMENT.md           # Deployment guides
-│   ├── SECURITY.md             # Security policies
-│   └── RUNBOOKS.md             # Operational procedures
-│
-├── implementations/             # Actual implementations
-│   ├── gateway/                # LiteLLM configs
-│   ├── observability/          # Langfuse setup
-│   ├── guardrails/             # Safety filters
-│   ├── memory/                 # Agent memory systems
-│   └── prompts/                # Prompt templates & management
-│
-├── config/                      # Configuration files
-│   ├── litellm/
-│   ├── docker/
-│   └── kubernetes/
-│
-└── CLAUDE.md                    # Claude Code context
+Open WebUI     →  Unified chat interface
+     ↓
+LiteLLM        →  API gateway (Claude, GPT, Gemini, Local)
+     ↓
+Langfuse       →  Observability & cost tracking
+     ↓
+Qdrant         →  Vector DB for RAG/memory
+     ↓
+Ollama         →  Local models for privacy
 ```
 
-## Stack Components
+[Deploy in 30 minutes →](guides/getting-started/YOUR_FIRST_AI_OPS_STACK.md)
 
-| Layer | Tool | Purpose | Status |
-|-------|------|---------|--------|
-| Interface | Open WebUI | Multi-model chat, RAG | Research |
-| Gateway | LiteLLM | Unified API for all providers | Research |
-| Comms | Element/Matrix | E2E encrypted family chat | Research |
-| Observability | Langfuse | Tracing, cost, evaluation | Research |
-| Orchestration | n8n + Temporal | Workflows, durable agents | Research |
-| Guardrails | NeMo Guardrails / Custom | Safety, PII, toxicity | Research |
-| Memory | Mem0 / Custom | Long-term agent memory | Research |
-| Prompts | Langfuse / Custom | Version control, A/B testing | Research |
-| Vectors | Qdrant | Embeddings storage | Research |
-| Database | PostgreSQL | Relational data | Research |
+## Related Projects
 
-## Provider Support
+- **[Agentic Creator OS](https://github.com/frankxai/agentic-creator-os)** - Operating system for AI-augmented creators
+- **[The Frank Method](https://github.com/oci-ai-architects/oci-ai-architect)** - Enterprise AI agent methodology
+- **Family Intelligence System** - Coming soon
 
-| Provider | Models | Integration |
-|----------|--------|-------------|
-| Anthropic | Claude Opus, Sonnet, Haiku | Via LiteLLM |
-| OpenAI | GPT-4o, o1, o3 | Via LiteLLM |
-| Google | Gemini 2.5 Pro/Flash | Via LiteLLM |
-| Ollama | Llama, Mistral, etc. | Local, via LiteLLM |
-| Oracle OCI | Cohere Command A, Llama | Via LiteLLM |
+## Content
 
-## Domains
+### Book (In Progress)
+*AI Ops: The Operating Manual for the Intelligence Age*
 
-### GenCreator (Business)
-- Content creation workflows
-- Music generation (Suno)
-- Brand management
+A practical guide covering personal, family, creator, and enterprise AI operations.
 
-### Agentic Creator OS
-- Multi-agent orchestration
-- Durable workflows
-- Tool integrations
+### Articles
+- Coming soon
 
-### Family Intelligence
-- Private family assistant
-- E2E encrypted
-- Kid-safe configurations
+### Courses
+- Coming soon
 
-### Enterprise (Isolated)
-- Completely separate instance
-- Compliance & audit
-- No data mixing
+## Contributing
 
-## Roadmap
-
-### Phase 1: Research (Current)
-- [ ] Document all provider capabilities
-- [ ] Evaluate gateway options
-- [ ] Research guardrails solutions
-- [ ] Compare memory systems
-
-### Phase 2: Core Implementation
-- [ ] Deploy LiteLLM gateway
-- [ ] Set up Langfuse observability
-- [ ] Configure Open WebUI
-- [ ] Basic cost tracking
-
-### Phase 3: Advanced Features
-- [ ] Implement guardrails
-- [ ] Set up prompt management
-- [ ] Build memory system
-- [ ] Automated evaluation
-
-### Phase 4: Production
-- [ ] Multi-domain deployment
-- [ ] Security hardening
-- [ ] Monitoring & alerting
-- [ ] Documentation complete
-
-## Resources
-
-### Core Platforms
-- [Open WebUI](https://github.com/open-webui/open-webui)
-- [LiteLLM](https://github.com/BerriAI/litellm)
-- [Langfuse](https://langfuse.com/)
-- [Element/Matrix](https://element.io/)
-
-### Research
-- [Awesome LLMOps](https://github.com/tensorchord/Awesome-LLMOps)
-- [Open Source LLMOps Stack](https://oss-llmops-stack.com/)
-- [LLMOps Guide](https://redis.io/blog/large-language-model-operations-guide/)
+This is a living system. Research, implementations, and content evolve continuously.
 
 ---
 
-*AI Ops - Personal AI Operations Platform*
+*AI Ops is not a product. It's a practice.*
